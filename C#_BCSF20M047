@@ -1,0 +1,332 @@
+1. Adapter Design Pattern:
+-------------------------
+
+
+public interface ITarget
+{
+    void Request();
+}
+
+// Adaptee
+public class Adaptee
+{
+    public void SpecificRequest()
+    {
+        Console.WriteLine("Specific Request");
+    }
+}
+public class Adapter : ITarget
+{
+    private Adaptee adaptee;
+
+    public Adapter(Adaptee adaptee)
+    {
+        this.adaptee = adaptee;
+    }
+
+    public void Request()
+    {
+        adaptee.SpecificRequest();
+    }
+}
+Adaptee adaptee = new Adaptee();
+ITarget adapter = new Adapter(adaptee);
+adapter.Request();
+
+
+2. Composite Design Pattern:
+----------------------------
+
+
+
+public interface IComponent
+{
+    void Display();
+}
+public class Leaf : IComponent
+{
+    private string name;
+
+    public Leaf(string name)
+    {
+        this.name = name;
+    }
+
+    public void Display()
+    {
+        Console.WriteLine($"Leaf: {name}");
+    }
+}
+
+public class Composite : IComponent
+{
+    private List<IComponent> components = new List<IComponent>();
+
+    public void Add(IComponent component)
+    {
+        components.Add(component);
+    }
+
+    public void Display()
+    {
+        foreach (var component in components)
+        {
+            component.Display();
+        }
+    }
+}
+
+IComponent leaf1 = new Leaf("Leaf 1");
+IComponent leaf2 = new Leaf("Leaf 2");
+
+Composite composite = new Composite();
+composite.Add(leaf1);
+composite.Add(leaf2);
+composite.Display();
+
+
+
+
+3. Proxy Design Pattern:
+------------------------
+
+
+public interface ISubject
+{
+    void Request();
+}
+
+public class RealSubject : ISubject
+{
+    public void Request()
+    {
+        Console.WriteLine("RealSubject: Request");
+    }
+}
+
+public class Proxy : ISubject
+{
+    private RealSubject realSubject;
+
+    public void Request()
+    {
+        if (realSubject == null)
+        {
+            realSubject = new RealSubject();
+        }
+        realSubject.Request();
+    }
+}
+
+ISubject proxy = new Proxy();
+proxy.Request();
+
+
+
+4. Flyweight Design Pattern:
+----------------------------
+
+
+public interface IFlyweight
+{
+    void Operation();
+}
+
+public class ConcreteFlyweight : IFlyweight
+{
+    private string intrinsicState;
+
+    public ConcreteFlyweight(string intrinsicState)
+    {
+        this.intrinsicState = intrinsicState;
+    }
+
+    public void Operation()
+    {
+        Console.WriteLine($"ConcreteFlyweight: {intrinsicState}");
+    }
+}
+public class FlyweightFactory
+{
+    private Dictionary<string, IFlyweight> flyweights = new Dictionary<string, IFlyweight>();
+
+    public IFlyweight GetFlyweight(string key)
+    {
+        if (!flyweights.ContainsKey(key))
+        {
+            flyweights[key] = new ConcreteFlyweight(key);
+        }
+        return flyweights[key];
+    }
+}
+FlyweightFactory factory = new FlyweightFactory();
+IFlyweight flyweight1 = factory.GetFlyweight("A");
+flyweight1.Operation();
+
+IFlyweight flyweight2 = factory.GetFlyweight("B");
+flyweight2.Operation();
+
+
+
+
+5. Facade Design Pattern:
+-------------------------
+
+
+public class Subsystem1
+{
+    public void Operation1()
+    {
+        Console.WriteLine("Subsystem 1: Operation 1");
+    }
+}
+
+public class Subsystem2
+{
+    public void Operation2()
+    {
+        Console.WriteLine("Subsystem 2: Operation 2");
+    }
+}
+
+public class Facade
+{
+    private Subsystem1 subsystem1;
+    private Subsystem2 subsystem2;
+
+    public Facade()
+    {
+        subsystem1 = new Subsystem1();
+        subsystem2 = new Subsystem2();
+    }
+
+    public void Operation()
+    {
+        subsystem1.Operation1();
+        subsystem2.Operation2();
+    }
+}
+
+Facade facade = new Facade();
+facade.Operation();
+
+
+
+6. Bridge Design Pattern:
+-------------------------
+
+
+public interface IImplementor
+{
+    void OperationImp();
+}
+
+public class ConcreteImplementorA : IImplementor
+{
+    public void OperationImp()
+    {
+        Console.WriteLine("ConcreteImplementorA: OperationImp");
+    }
+}
+
+public class ConcreteImplementorB : IImplementor
+{
+    public void OperationImp()
+    {
+        Console.WriteLine("ConcreteImplementorB: OperationImp");
+    }
+}
+
+public abstract class Abstraction
+{
+    protected IImplementor implementor;
+
+    public Abstraction(IImplementor implementor)
+    {
+        this.implementor = implementor;
+    }
+
+    public abstract void Operation();
+}
+
+public class RefinedAbstraction : Abstraction
+{
+    public RefinedAbstraction(IImplementor implementor) : base(implementor) { }
+
+    public override void Operation()
+    {
+        implementor.OperationImp();
+    }
+}
+
+IImplementor implementorA = new ConcreteImplementorA();
+Abstraction abstractionA = new RefinedAbstraction(implementorA);
+abstractionA.Operation();
+
+IImplementor implementorB = new ConcreteImplementorB();
+Abstraction abstractionB = new RefinedAbstraction(implementorB);
+abstractionB.Operation();
+
+
+7. Decorator Design Pattern:
+----------------------------
+
+
+public interface IComponent
+{
+    void Operation();
+}
+public class ConcreteComponent : IComponent
+{
+    public void Operation()
+    {
+        Console.WriteLine("ConcreteComponent: Operation");
+    }
+}
+public abstract class Decorator : IComponent
+{
+    protected IComponent component;
+
+    public Decorator(IComponent component)
+    {
+        this.component = component;
+    }
+
+    public virtual void Operation()
+    {
+        if (component != null)
+        {
+            component.Operation();
+        }
+    }
+}
+
+public class ConcreteDecoratorA : Decorator
+{
+    public ConcreteDecoratorA(IComponent component) : base(component) { }
+
+    public override void Operation()
+    {
+        base.Operation();
+        Console.WriteLine("ConcreteDecoratorA: Operation");
+    }
+}
+public class ConcreteDecoratorB : Decorator
+{
+    public ConcreteDecoratorB(IComponent component) : base(component) { }
+
+    public override void Operation()
+    {
+        base.Operation();
+        Console.WriteLine("ConcreteDecoratorB: Operation");
+    }
+}
+
+IComponent component = new ConcreteComponent();
+Decorator decoratorA = new ConcreteDecoratorA(component);
+Decorator decoratorB = new ConcreteDecoratorB(decoratorA);
+decoratorB.Operation();
+
+
+
+
